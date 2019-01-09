@@ -1,92 +1,119 @@
-#DEMO
-## 1. 借款服务合同接口
-### GET /v2/contract/loan/{sn}
-### Response说明
+#合作机构接入说明
+主要采用rsa加密的形式进行交互。双加密（即请求、响应、回调、回调响应都进行加密），接入前。合作结构需要提供公钥给我们，我们也会把提供公钥给合作机构。
+数据交互使用HTTP JSON格式进行交互
+##加密说明
 
-字段名 | 说明 | 类型
----|---|---
-contractSn | 合同编号 | String
-signDate | 签订日期 | String
-loanName | 借款人名字 | String
-loanIdCard | 借款人身份证 | String
-loanMobile | 借款人手机号 | String
-loanCardNo | 借款人银行卡号 | String
-principal | 本金 | String
-periods | 借款期数 | String
-loanDate | 借款时间 | String
-loanEndDate | 借款结束时间 | String
-serviceFee | 乙方服务费 | String
-otherServiceFee | 丙方服务费 | String
-creditAmount | 放款金额 | String
-creditServiceFee | 放款服务费 | String
-repaymentMonth | 还款金额 | String
-repaymentPrincipal | 还款本金 | String
-repaymentServiceFee | 还款服务费 | String
-overdueFee | 逾期罚息 | String
+针对数据对象进行加密。并生成 验签串。传递给双方。
+
+##拉取接口请求
+请求信息：
+参数|名称|值类型|是否可空|备注
+---|:--:|---:|---:|---:|
+channel|渠道|string|否|渠道会提前分配
+version|版本号|string|否|当前版本为v1
+method|方法名|string|否|不同的拉取接口有不同的method，用来确认请求的接口
+data|数据区json|string|否|加密后的数据信息
+sign|签名|string|否|用来验签
+channelType|渠道类型|string|否|固定传递 01
+
+例子：
+
+```
+{
+    "channel":"xxxx",
+    "version":"v1",
+    "method":"order.push",
+    "data":"KSLJDLQOWIEOAKSDKASDNJKANSDJNKASNJDKHSAKHDKASHDKJASKDHKASHDKHJAKHDAKJSDLSAJLDJALSJDLJSALJDLSDJSJDLKJ",
+    "sign":"QIXWKSJHDQMMSDNJKQ",
+    "channelType":"01"
+}
+```
 
 
-### 格式--成功：
+##拉取接口响应
+响应信息：
+参数|名称|值类型|是否可空|备注
+---|:--:|---:|---:|---:|
+channel|渠道|string|否|渠道会提前分配
+version|版本号|string|否|当前版本为v1
+respData|数据区json|string|否|加密后的数据信息
+respSign|签名|string|否|用来验签
+channelType|渠道类型|string|否|固定传递 01
+
+例子：
+
+```
+{
+    "channel":"xxxx",
+    "version":"v1",
+    "method":"order.push",
+    "respData":"KSLJDLQOWIEOAKSDKASDNJKANSDJNKASNJDKHSAKHDKASHDKJASKDHKASHDKHJAKHD",
+    "respSign":"QIXWKSJHDQMMSDNJKQ",
+    "channelType":"01"
+}
+```
+
+##同步接口请求
+请求信息：
+参数|名称|值类型|是否可空|备注
+---|:--:|---:|---:|---:|
+channel|渠道|string|否|渠道会提前分配
+version|版本号|string|否|当前版本为v1
+data|数据区json|string|否|加密后的数据信息
+sign|签名|string|否|用来验签
+channelType|渠道类型|string|否|固定传递 01
+
+例子：
+
+```
+{
+    "channel":"xxxx",
+    "version":"v1",
+    "data":"KSLJDLQOWIEOAKSDKASDNJKANSDJNKASNJDKHSAKHDKASHDKJASKDHKASHDKHJAKHDAKJSDLSAJLDJALSJDLJSALJDLSDJSJDLKJ",
+    "sign":"QIXWKSJHDQMMSDNJKQ",
+    "channelType":"01"
+}
+```
+
+
+##同步接口响应
+响应信息：
+参数|名称|值类型|是否可空|备注
+---|:--:|---:|---:|---:|
+channel|渠道|string|否|渠道会提前分配
+version|版本号|string|否|当前版本为v1
+respData|数据区json|string|否|加密后的数据信息
+respSign|签名|string|否|用来验签
+channelType|渠道类型|string|否|固定传递 01
+
+例子：
+
+```
+{
+    "channel":"xxxx",
+    "version":"v1",
+    "method":"order.push",
+    "respData":"KSLJDLQOWIEOAKSDKASDNJKANSDJNKASNJDKHSAKHDKASHDKJASKDHKASHDKHJAKHD",
+    "respSign":"QIXWKSJHDQMMSDNJKQ",
+    "channelType":"01"
+}
+```
+
+
+##请求data、响应respData JSON结构
+参数|名称|值类型|是否可空|备注
+---|:--:|---:|---:|---:|
+code|业务码|int|否|code信息 200为正常。其他均为非正常
+message|提示消息|string|否|根据code返回相应信息
+data|数据|object|否|根据接口不同，返回不同的数据信息。
 
 
 ```
 {
     "code":200,
-    "message":"",
-    "data": {
-        "contractSn":"",
-        "signDate":"",
-        "loanName":"",
-        "loanIdCard":"",
-        "loanMobile":"",
-        "loanCardNo":"",
-        "principal":"",
-        "periods":"",
-        "loanDate":"",
-        "loanEndDate":"",
-        "serviceFee":"",
-        "otherServiceFee":"",
-        "creditAmount":"",
-        "creditServiceFee":"",
-        "repaymentMonth":"",
-        "repaymentPrincipal":"",
-        "repaymentServiceFee":"",
-        "overdueFee":""
+    "message":"成功",
+    "data":{
+    	"demo":"demo"
     }
 }
 ```
-
-
-## 2. 担保协议
-### GET /v2/contract/agreement/{sn}
-### Response说明
-
-字段名 | 说明 | 类型
----|---|---
-loanContractSn | 借款合同编号 | String
-contractSn | 合同编号 | String
-signDate | 签订日期 | String
-loanName | 借款人名字 | String
-loanIdCard | 借款人身份证 | String
-loanMobile | 借款人手机号 | String
-
-
-
-### 格式--成功：
-
-
-```
-{
-    "code":200,
-    "message":"",
-    "data": {
-        "loanContractSn":"",
-        "contractSn":"",
-        "signDate":"",
-        "loanName":"",
-        "loanIdCard":"",
-        "loanMobile":""
-    }
-}
-```
-
-
